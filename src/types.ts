@@ -5,6 +5,7 @@ export type Session = {
   startBankroll: number;
   endBankroll?: number;
   currentBankroll?: number;
+  rakeback?: number;
 };
 
 export type Tab = "overview" | "sessions" | "graphs";

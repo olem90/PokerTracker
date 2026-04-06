@@ -28,6 +28,22 @@ export const SessionsContainer = styled.div`
   flex-direction: column;
 `;
 
+export const SessionsFilter = styled.div`
+  max-width: fit-content;
+  display: flex;
+  margin-bottom: 25px;
+  min-width: 100%;
+  padding: 0;
+`;
+
+export const SessionsFilterSelect = styled.select`
+  max-width: fit-content;
+  display: flex;
+  margin-bottom: 25px;
+  margin-left: auto;
+  font-size: 1.2rem;
+`;
+
 export const SelectSession = styled.div`
   display: flex;
   justify-content: center;
@@ -78,6 +94,55 @@ export const CurrentSessionData = styled.div`
   margin-block: 10px 20px;
   font-size: 1.3rem;
 `;
+
+export const ImportExportBtnsContainer = styled.div`
+  display: flex;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  margin-block: 10px 20px;
+`;
+
+export const SaveSessionBtn = styled.button`
+  display: flex;
+  border: 1px solid #908f8fc6;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 6px;
+  outline: none;
+  border-radius: 5px;
+  background: #023b13;
+  color: #fff;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+  margin-left: 10px;
+
+  &:hover {
+    cursor: pointer;
+    color: #06a837;
+  }
+`;
+
+
+export const ImportSessionBtn = styled.button`
+  display: flex;
+  border: 1px solid #908f8fc6;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 6px;
+  outline: none;
+  border-radius: 5px;
+  background: #8e5607;
+  color: #fff;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.7rem;
+
+  &:hover {
+    cursor: pointer;
+    color: #f09c3d;
+  }
+`;
+
 
 export const DeleteSessionBtn = styled.button`
   display: flex;

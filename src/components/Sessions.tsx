@@ -17,20 +17,38 @@ import {
   DeleteSessionBtn,
   SessionsH2,
   StartSessionButton,
+  SessionsFilter,
+  SessionsFilterSelect,
+  SaveSessionBtn,
+  ImportSessionBtn,
+  ImportExportBtnsContainer,
 } from "./Sessions.style";
 import { useState } from "react";
 import type { Session } from "../types";
 import "react-datepicker/dist/react-datepicker.css";
+import ImportModal from "./ImportModal";
 
 type Props = {
   sessions: Session[];
   setSessions: React.Dispatch<React.SetStateAction<Session[]>>;
+  sortType: "none" | "biggestWin" | "biggestLoss";
+  setSortType: React.Dispatch<
+    React.SetStateAction<"none" | "biggestWin" | "biggestLoss">
+  >;
+  onOpenImport: () => void;
 };
 
-const Sessions = ({ sessions, setSessions }: Props) => {
+const Sessions = ({
+  sessions,
+  setSessions,
+  sortType,
+  setSortType,
+  onOpenImport,
+}: Props) => {
   const [date, setDate] = useState("");
   const [start, setStart] = useState("");
   const [endInputs, setEndInputs] = useState<{ [key: string]: string }>({});
+  const [showImportModal, setShowImportModal] = useState(false);
 
   const handleStartSession = () => {
     if (!date || !start) return;
@@ -59,10 +77,26 @@ const Sessions = ({ sessions, setSessions }: Props) => {
     setSessions((prev) => prev.filter((s) => s.id !== id));
   };
 
-  const handleEndSession = (id: string, endValue: string) => {
+  const exportData = () => {
+    const dataStr = JSON.stringify(sessions, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "sessions_backup.json";
+    a.click();
+  };
+
+  const handleEndSession = (
+    id: string,
+    endValue: string,
+    rakebackValue?: string,
+  ) => {
     if (!endValue) return; // 🛑 prevent empty input
 
     const end = Number(endValue);
+    const rakeback = rakebackValue ? Number(rakebackValue) : 0;
 
     setSessions((prev) =>
       prev.map((s) => {
@@ -71,6 +105,7 @@ const Sessions = ({ sessions, setSessions }: Props) => {
         return {
           ...s,
           endBankroll: end,
+          rakeback,
           profit: end - s.startBankroll,
         };
       }),
@@ -80,6 +115,18 @@ const Sessions = ({ sessions, setSessions }: Props) => {
   return (
     <SessionsWrapper>
       {/* ❌ Hide start section if active session exists */}
+      <ImportExportBtnsContainer>
+        <ImportSessionBtn onClick={() => setShowImportModal(true)}>
+          Import Sessions
+        </ImportSessionBtn>
+        <SaveSessionBtn onClick={exportData}>Save Sessions</SaveSessionBtn>
+      </ImportExportBtnsContainer>
+      {showImportModal && (
+        <ImportModal
+          onClose={() => setShowImportModal(false)}
+          setSessions={setSessions}
+        />
+      )}
       {!currentSession && (
         <>
           <SessionsH2>Start Session</SessionsH2>
@@ -105,7 +152,6 @@ const Sessions = ({ sessions, setSessions }: Props) => {
 
             <SessionsInput
               type="number"
-              
               placeholder="Start bankroll"
               value={start}
               onChange={(e) => setStart(e.target.value)}
@@ -158,7 +204,18 @@ const Sessions = ({ sessions, setSessions }: Props) => {
 
       {completedSessions.length > 0 && (
         <>
+          <SessionsFilter>
+            <SessionsFilterSelect
+              value={sortType}
+              onChange={(e) => setSortType(e.target.value as any)}
+            >
+              <option value="none">Default</option>
+              <option value="biggestWin">Biggest Wins</option>
+              <option value="biggestLoss">Biggest Losses</option>
+            </SessionsFilterSelect>
+          </SessionsFilter>
           <SessionsH2>Sessions</SessionsH2>
+
           <SessionsContainer>
             {completedSessions.map((s) => (
               <SessionsContent key={s.id}>
